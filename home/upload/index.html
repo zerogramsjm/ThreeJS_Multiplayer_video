@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>MULTIPLAYER</title>
+	<meta name="viewport" content="width=device-width, initial-scale=.7, user-scalable=0">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://jevonmahoney.com/MIX/home/js/RecordRTC.js"></script>
+	<link href="http://fonts.cdnfonts.com/css/neue-haas-grotesk-display-pro" rel="stylesheet">
+
+	<style type="text/css">
+
+	*{
+		font-family: "Nimus-black";
+		margin: 0px;
+	}
+
+	@font-face {
+	  font-family: "Excelorate";
+	  src: url("../fonts/Excelorate-Font.otf");
+	}
+
+	@font-face {
+		font-family: "Nimus-black";
+		src: url("../fonts/Nimbus-Sans-D-OT-Black_32742.ttf");
+	}
+
+	.header{
+		font-family: Excelorate;
+		width: calc( 100vw - 45px - 20px);
+		height: 20px;
+		background-color: #F1B700;
+		top: 0px;
+		left: 0px;
+		font-size:  26px;
+		padding:  20px;
+		padding-left:  45px;
+		z-index: 2;
+	}
+
+	:focus {
+	    outline: none !important;
+	}
+
+	a{
+		text-decoration: none;
+		color: #fff;
+	}
+
+	body{
+		background-color: #DBB593;
+	}
+
+	input, .button{
+		padding-top: 10px;
+		padding-bottom: 10px;
+		display: block;
+		border:  none;
+		text-align: center;
+		margin-top: 5px;
+	}
+
+	input{
+		border: 3px solid #000;
+		width: 190px;
+		color: #000;
+		background-color: #fff;
+		border-radius: 10px;
+	}
+
+	.button{
+		width: 200px;
+		background-color: #000;
+		color: #fff;
+		border-radius: 10px;
+	}
+
+	.button:hover{
+		cursor: pointer;
+	}
+
+	.video_container{
+		top: 50px;
+		width: 90%;
+		height: 700px;
+		right: 5%;
+		position: relative;
+		background-color: #299B47;
+		float: right;
+		border-radius: 20px;
+		border: 2px solid #000;
+	}
+
+	.video_overlay{
+		padding: 50px;
+		background-color: transparent;
+		pointer-events: none;
+		position: absolute;
+		margin-top: 50px;
+		width: calc( 60% - 200px );
+		height: 405px;
+		border-radius: 20px;
+		border: 5px white solid;
+		left: 50%;
+		transform: translate(-50%);
+		z-index: 1;
+		border-radius: 0px;
+		border: solid #F1B700 1px;
+		display: none;
+	}
+
+	@media screen and (max-width: 890px) {
+		.video_overlay{
+			width: calc( 90% - 200px );
+			display: none;
+		}
+	}
+
+	video{
+		pointer-events: none;
+		position: absolute;
+		margin-top: 10px;
+		width: calc( 100% - 30px );
+		height: 575px;
+		border-radius: 20px;
+		border: 5px white solid;
+		left:  10px;
+	}
+
+	.arrow {
+	  border: solid black;
+	  border-width: 0 3px 3px 0;
+	  display: inline-block;
+	  padding: 3px;
+	}
+
+	.right {
+	  transform: rotate(-45deg);
+	  -webkit-transform: rotate(-45deg);
+	}
+
+	.controls{
+		background-color: #fff;
+		position: relative;
+		width: 400px;
+		bottom: 90px;
+		z-index: 5;
+		padding: 20px;
+		border-radius: 20px;
+		border: #000 solid 2px;
+		transform: translate(-50%);
+		left:  50%;
+		display: inline-block;
+		top: -45px;
+	}
+
+	.controls_button{
+		padding: 10px;
+		display: inline-block;
+		border-radius: 50px;
+		background-color: #F1B700;
+		border: 0px;
+		font-size: 14px;
+	}
+
+	.controls_button:hover{
+		cursor: pointer;
+	}
+
+	.timer_container{
+		position: absolute;
+		background-color: transparent;
+		width: 150px;
+		text-align: center;
+		margin-left: 25px;
+		top: 25px;
+		right: 0px;
+	}
+
+	.timer_container label{
+		font-size: 26px;
+	}
+
+	.uploaded_background{
+		background-color: #000;
+		opacity: .5;
+		display: none;
+		z-index: 1;
+		width: 100vw;
+		height: 100vh;
+		top: 0px;
+		left: 0px;
+		position: absolute;
+	}
+
+	.details_inner{
+		left: 50px;
+		top: 50%;
+		transform: translate(0%, -50%);
+		position: absolute;
+		background-color: #299B47;
+		padding: 50px;
+		border-radius: 20px;
+		border:  2px solid #000;
+		z-index: 3;
+	}
+
+	.details_inner h1{
+		font-family: Excelorate;
+		font-size: 26px;
+		color: #fff;
+		margin-bottom: 35px;
+	}
+
+	.uploaded{
+		display: none;
+		position: absolute;
+		width: 100vw;
+		height: 100vh;
+		background-color: transparent;
+		opacity: 1;
+		left: 0px;
+		top: 0px;
+		z-index: 2;
+	}
+
+	.uploaded_inner{
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		position: absolute;
+		background-color: #fff;
+		padding: 50px;
+		text-align: center;
+	}
+
+	.uploaded_close{
+		width: 30px;
+		color: #000;
+		z-index: 2;
+		padding: 10px;
+		font-size: 30px;
+		line-height: 0px;
+		text-align: center;
+		background-color: transparent;
+		font-size: 90px;
+		position: absolute;
+		top: 15px;
+		right: 7px;
+	}
+
+	.uploaded_close:hover{
+		cursor: pointer;
+	}
+
+	.uploaded_close:after{
+	  display: inline-block;
+	  content: "\00d7";
+	}
+
+	.response{
+		background-color: transparent;
+		position: relative;
+		z-index: 2;
+		width: 205px;
+		font-size: 18px;
+		line-height: 20px;
+		margin-top: 20px;
+	}
+
+	.city_dropdown,
+	.tag_1_dropdown,
+	.nop_dropdown{
+		position: relative;
+		top: 0px;
+	}
+
+	.city_dropdown_btn,
+	.tag_1_dropdown_btn,
+	.nop_dropdown_btn{
+		padding-top: 10px;
+		padding-bottom: 10px;
+		border-radius: 10px;
+		border: none;
+		text-align: center;
+		width: 200px;
+		background-color: #000;
+		color: #fff;
+		margin-top: 5px;
+	}
+
+	.city_dropdown_btn:hover,
+	.tag_1_dropdown_btn:hover,
+	.nop_dropdown_btn:hover{
+		cursor: pointer;
+	}
+
+	.city_dropdown_selections,
+	.tag_1_dropdown_selections,
+	.nop_dropdown_selections{
+		display: none;
+		overflow-y: scroll;
+		height: 100px;
+		border-radius: 10px;
+		width: 200px;
+	}
+
+	.city_dropdown_selections a,
+	.tag_1_dropdown_selections a,
+	.nop_dropdown_selections a{
+		padding-top: 10px;
+		padding-bottom: 10px;
+		border-radius: 0px;
+		border: none;
+		text-align: center;
+		width: 200px;
+		display: block;
+		background-color: #fff;
+		z-index: 2;
+		color: #000;
+		position: relative;
+	}
+	
+	.city_dropdown_selections a:hover,
+	.tag_1_dropdown_selections a:hover,
+	.nop_dropdown_selections a:hover{
+		background-color: #bbb;
+		cursor: default;
+	}
+
+	.map{
+		padding: 10px;
+		width: 75px;
+		background-color: #000;
+		border:  2px solid #fff;
+		text-align: center;
+		top: 10px;
+		right: 20px;
+		position: absolute;
+		color:  #fff;
+		border-radius: 10px;
+		font-family: "Nimus-black";
+	}
+
+	.map:hover{
+		cursor: pointer;
+	}
+
+	.uploadbutton{
+		width: 200px;
+		border-radius: 50px;
+		background-color: #fff;
+		border: 2px solid #000;
+		height: 50px;
+		bottom: 0px;
+		position: relative;
+		display: none;
+	}
+
+	.uploadbutton:hover{
+		cursor: pointer;
+	}
+
+	@media only screen and (max-width: 890px) {
+
+		input{
+			width: calc( 100% - 10px );
+		}
+
+		.city_dropdown_btn,
+		.tag_1_dropdown_btn,
+		.nop_dropdown_btn{
+			width: 100%;
+		}
+
+		.uploadbutton{
+			width: 100%;
+		}
+
+		.details_inner{
+			top: 0px;
+			position: relative;
+			background-color: #299B47;
+			padding: 50px;
+			border-radius: 20px;
+			border: 2px solid #000;
+			width: 75%;
+			left: 50%;
+			transform: translate(-50%);
+		}
+
+		.city_dropdown_selections,
+		.tag_1_dropdown_selections,
+		.nop_dropdown_selections{
+			width: 100%;
+		}
+
+		.city_dropdown_selections a,
+		.tag_1_dropdown_selections a,
+		.nop_dropdown_selections a{
+			width: 100%;
+		}
+		.response{
+			background-color: transparent;
+			position: relative;
+			z-index: 2;
+			width: 100%;
+			font-size: 18px;
+			line-height: 20px;
+			margin-top: 20px;
+		}
+
+	}
+
+	</style>
+
+</head>
+<body>
+
+	<div class="header">Multiplayer</div>
+
+<div id="video_container" class="video_container">
+	<div class="video_overlay"></div>
+	<video playsinline id="vid_stream" controls autoplay=""></video>
+</div>
+
+<div class="controls">
+	<div class="controls_button" id="startrecording">RECORD</div>
+	<div class="controls_button" style="pointer-events: none;" id="stoprecording">STOP</div>
+	<div class="controls_button" style="pointer-events: none;" id="submitrecording">FINISH</div>
+	<div class="controls_button" style="pointer-events: none;" id="resetrecording">RESET</div>
+	<div class="timer_container">
+		<label id="minutes">00</label>:<label id="seconds">00</label>
+	</div>
+</div>
+
+	<div class="map">
+			<a href="../">EARTH</a>
+	</div>
+
+<div class="uploaded_background"></div>
+<div class="uploaded">
+	<div class="uploaded_inner">
+		<div class="uploaded_close"></div>
+		Your video has been successfully submitted!!<br/><br/>
+		WOOOO!<br/><br/>
+		You'll recieve an email shortly to confirm it's place in the world!</div>
+</div>
+
+	<div class="details_inner">
+		<h1>DETAILS</h1>
+		<div class="city_dropdown">
+		<div id="city" class="city_dropdown_btn">CITY</div>
+			<div class="city_dropdown_selections">
+			<a id="TOKYO">TOKYO</a>
+			<a id="JAKARTA">JAKARTA</a>
+			<a id="DELHI">DELHI</a>
+			<a id="SEOUL">SEOUL</a>
+			<a id="SHANGHAI">SHANGHAI</a>
+			<a id="BEIJING">BEIJING</a>
+			<a id="GUANGZHOU_FOSHAN">GUANGZHOU FOSHAN</a>
+			<a id="OSAKA_KOBE_KYOTO">OSAKA KOBE KYOTO</a>
+			<a id="BANGKOK">BANGKOK</a>
+			<a id="KOLKATA">KOLKATA</a>
+			<a id="SHENZHEN">SHENZHEN</a>
+			<a id="TIANJIN">TIANJIN</a>
+			<a id="BANGALORE">BANGALORE</a>
+			<a id="CHENGDU">CHENGDU</a>
+			<a id="TAIPEI">TAIPEI</a>
+			<a id="LAHORE">LAHORE</a>
+			<a id="HO_CHI_MINH_CITY">HO CHI MINH CITY</a>
+			<a id="NAGOYA">NAGOYA</a>
+			<a id="CHENNAI">CHENNAI</a>
+			<a id="DONGGUAN">DONGGUAN</a>
+			<a id="HYDERABAD">HYDERABAD</a>
+			<a id="WUHAN">WUHAN</a>
+			<a id="HANGZHOU">HANGZHOU</a>
+			<a id="HANOI">HANOI</a>
+			<a id="CHONGQING">CHONGQING</a>
+			<a id="AHMADABAD">AHMADABAD</a>
+			<a id="KUALA_LUMPUR">KUALA LUMPUR</a>
+			<a id="SINGAPORE">SINGAPORE</a>
+			<a id="MANILA">MANILA</a>
+			<a id="MUMBAI">MUMBAI</a>
+			<a id="KARACHI">KARACHI</a>
+			<a id="CAIRO">CAIRO</a>
+			<a id="TEHRAN">TEHRAN</a>
+			<a id="LAGOS">LAGOS</a>
+			<a id="KINSHASA">KINSHASA</a>
+			<a id="ONITSHA">ONITSHA</a>
+			<a id="SAO_PAOLO">SAO PAOLO</a>
+			<a id="RIO_DE_JANEIRO">RIO DE JANEIRO</a>
+			<a id="LIMA">LIMA</a>
+			<a id="BOGOTA">BOGOTA</a>
+			<a id="BUENOS_AIRES">BUENOS AIRES</a>
+			<a id="NEW_YORK">NEW YORK</a>
+			<a id="MEXICO_CITY">MEXICO CITY</a>
+			<a id="LOS_ANGELES">LOS ANGELES</a>
+			<a id="CHICAGO">CHICAGO</a>
+			<a id="MOSCOW">MOSCOW</a>
+			<a id="PARIS">PARIS</a>
+			<a id="LONDON">LONDON</a>
+			<a id="ISTANBUL">ISTANBUL</a>
+			<a id="SYDNEY">SYDNEY</a>
+			<a id="PERTH">PERTH</a>
+			<a id="BRISBANE">BRISBANE</a>
+			<a id="MELBOURNE">MELBOURNE</a>
+
+			</div>
+		</div>
+
+		<div class="tag_1_dropdown">
+		<div id="tag_1" class="tag_1_dropdown_btn">TAG 1</div>
+			<div class="tag_1_dropdown_selections">
+				<a id="WEEKEND GAMER">WEEKEND GAMER</a>
+				<a id="DESTRUCTIVE">DESTRUCTIVE</a>
+				<a id="SOCIAL GAMER">SOCIAL GAMER</a>
+				<a id="COMPETITIVE">COMPETITIVE</a>
+				<a id="BACKSEAT">BACKSEAT</a>
+				<a id="OLDSCHOOL">OLDSCHOOL</a>
+				<a id="TROPHY HUNTER">TROPHY HUNTER</a>
+			</div>
+		</div>
+
+		<div class="nop_dropdown">
+		<div id="nop" class="nop_dropdown_btn"># PLAYERS</div>
+			<div class="nop_dropdown_selections">
+				<a id="1">1</a>
+				<a id="2">2</a>
+				<a id="3">3</a>
+				<a id="4">4</a>
+				<a id="5">5</a>
+				<a id="6">6</a>
+				<a id="6+">6+</a>
+			</div>
+		</div>
+		<input type="text" id="name" placeholder="NAME" name="name">
+		<input type="text" id="gamertag" placeholder="GAMERTAG" name="gamertag">
+		<input type="text" id="game" placeholder="GAME" name="game">
+		<input type="email" id="email" placeholder="EMAIL" name="email">
+		<div id="response" class="response"></div>
+
+	<button class="uploadbutton" id="saverecording">UPLOAD RECORDING</button>
+
+	</div>
+
+
+<script type="text/javascript">
+
+	var blob;
+	var fileObject;
+	var filename;
+	var username, username_for_label;
+	var gamertag, gamertag_data;
+	var game, game_data;
+	var email, email_data;
+	var city, city_data;
+	var continent, continent_data;
+	var tag_1, tag_1_data;
+	var nop, nop_data;
+
+	var date, time;
+
+	var unique_id_before, unique_id_after;
+	
+	navigator.mediaDevices.getUserMedia({
+	    video: true,
+	    audio: true
+	}).then(function(camera) {
+
+    document.getElementById('vid_stream').muted = true;
+    document.getElementById('vid_stream').srcObject = camera;
+
+    var recordingHints = { type: 'video' };
+
+    var recorder = RecordRTC(camera, recordingHints);
+
+    setTimeout(function(){
+    	$("video").fadeIn();
+    },1000)
+
+    var form_data = new FormData();
+
+    $(".city_dropdown_btn").click(function(){
+    	$(".city_dropdown_selections").toggle();
+    })
+    $(".city_dropdown a").click(function(){
+    	city = this.id;
+    	$(".city_dropdown_btn").html(this.id)
+    	$(".city_dropdown_selections").hide();
+    })
+
+    $(".tag_1_dropdown_btn").click(function(){
+    	$(".tag_1_dropdown_selections").toggle();
+    })
+    $(".tag_1_dropdown a").click(function(){
+    	tag_1 = this.id;
+    	$(".tag_1_dropdown_btn").html(this.id)
+    	$(".tag_1_dropdown_selections").hide();
+    })
+
+    $(".nop_dropdown_btn").click(function(){
+    	$(".nop_dropdown_selections").toggle();
+    })
+    $(".nop_dropdown a").click(function(){
+    	nop = this.id;
+    	$(".nop_dropdown_btn").html(this.id)
+    	$(".nop_dropdown_selections").hide();
+    })
+
+	var minutesLabel = document.getElementById("minutes");
+	var secondsLabel = document.getElementById("seconds");
+	var totalSeconds = 0;
+	var timer = setInterval(setTime, 1000);
+	clearInterval( timer );
+
+	function setTime() {
+	  ++totalSeconds;
+	  secondsLabel.innerHTML = pad(totalSeconds % 60);
+	  minutesLabel.innerHTML = pad(parseInt(totalSeconds / 60));
+	}
+
+	function pad(val) {
+	  var valString = val + "";
+	  if (valString.length < 2) {
+	    return "0" + valString;
+	  } else {
+	    return valString;
+	  }
+	}
+
+    initialstate();
+
+    function initialstate(){
+    	console.log("initial state")
+    	$("#stoprecording, #submitrecording, #resetrecording").css("background-color","#bbb")
+	};
+
+	$("#submitrecording").click(function(){
+		$(".details").show();
+		$(".uploadbutton").show();
+		$(".details_background").show();
+		console.log("submitting")
+		$("#resetrecording").css("background-color","#bbb")
+		$("#resetrecording").css("pointer-events","none")
+		$("#submitrecording").css("background-color","#bbb")
+		$("#submitrecording").css("pointer-events","none")
+	})
+
+    $("#startrecording").click(function(){
+    	$(".video_overlay").show();
+		$(".response").html("")
+		recorder.startRecording();
+		$("#startrecording").css("background-color","#bbb")
+		$("#startrecording").css("pointer-events","none")
+		$("#stoprecording").css("background-color","#F1B700")
+		$("#stoprecording").css("pointer-events","auto")
+		timer = setInterval(setTime, 1000);
+	});
+
+    $("#stoprecording").click(function(){
+    	clearInterval( timer );
+    	$("#stoprecording").css("background-color","#bbb")
+    	$("#stoprecording").css("pointer-events","none")
+    	$("#submitrecording, #resetrecording").css("background-color","#F1B700")
+    	$("#submitrecording, #resetrecording").css("pointer-events","auto")
+    	$("#saverecording").css("pointer-events","auto")
+        recorder.stopRecording(function() {
+           	blob = recorder.getBlob();
+           	document.getElementById('vid_stream').srcObject = null;
+            document.getElementById('vid_stream').src = URL.createObjectURL(blob);
+            $("#vid_stream").css("pointer-events","auto")
+        });
+    })
+
+ 		$("#saverecording").click(function(){
+		 		if($('#name').val()==""){
+		 			$(".response").html("Please enter a name")
+		 		}else{
+		 			if($('#gamertag').val()==""){
+		 				$(".response").html("Please enter a gamertag")
+		    		}else{
+						if($('#email').val()==""){
+						 	$(".response").html("Please enter your email address")
+						 }else{
+						 	if($('#city').html()=="CITY"){
+						 		$(".response").html("Please select a city")
+						 	}else{
+						 		if($('#tag_1').html()=="TAG 1"){
+						 		$(".response").html("Please select from TAG 1")
+						 			}else{
+						 				if($('#nop').html()=="# PLAYERS"){
+								 		$(".response").html("Please select from # of Players")
+								 			}else{
+
+								 			$(".response").html("Uploading... Great! <br/> You're being redirected :)")
+
+								 			city = $('#city').html();
+
+								 			console.log(city)
+
+											if(city == "TOKYO"){ console.log("YES"); continent = "ASIA"}; 
+											if(city == "SEOUL"){ continent = "ASIA"}; 
+											if(city == "SHANGHAI"){ continent = "ASIA"}; 
+											if(city == "BEIJING"){ continent = "ASIA"}; 
+											if(city == "GUANGZHOU_FOSHAN"){ continent = "ASIA"}; 
+											if(city == "OSAKA_KOBE_KYOTO"){ continent = "ASIA"}; 
+											if(city == "BANGKOK"){ continent = "ASIA"}; 
+											if(city == "SHENZHEN"){ continent = "ASIA"}; 
+											if(city == "TIANJIN"){ continent = "ASIA"}; 
+											if(city == "CHENGDU"){ continent = "ASIA"}; 
+											if(city == "TAIPEI"){ continent = "ASIA"}; 
+											if(city == "LAHORE"){ continent = "ASIA"}; 
+											if(city == "HO_CHI_MINH_CITY"){ continent = "ASIA"}; 
+											if(city == "NAGOYA"){ continent = "ASIA"}; 
+											if(city == "CHENNAI"){ continent = "ASIA"}; 
+											if(city == "DONGGUAN"){ continent = "ASIA"}; 
+											if(city == "WUHAN"){ continent = "ASIA"}; 
+											if(city == "HANGZHOU"){ continent = "ASIA"}; 
+											if(city == "HANOI"){ continent = "ASIA"}; 
+											if(city == "CHONGQING"){ continent = "ASIA"};
+
+											if(city == "JAKARTA"){ continent = "INDIA"}; 
+											if(city == "DELHI"){ continent = "INDIA"}; 
+											if(city == "KOLKATA"){ continent = "INDIA"}; 
+											if(city == "BANGALORE"){ continent = "INDIA"}; 
+											if(city == "HYDERABAD"){ continent = "INDIA"}; 
+											if(city == "AHMADABAD"){ continent = "INDIA"}; 
+											if(city == "KUALA_LUMPUR"){ continent = "INDIA"};
+											if(city == "SINGAPORE"){ continent = "INDIA"}
+											if(city == "MANILA"){ continent = "INDIA"}; 
+											if(city == "MUMBAI"){ continent = "INDIA"}; 
+											if(city == "KARACHI"){ continent = "INDIA"}; 
+											if(city == "TEHRAN"){ continent = "INDIA"}; 
+
+											if(city == "CAIRO"){ continent = "AFRICA"}; 
+											if(city == "LAGOS"){ continent = "AFRICA"}; 
+											if(city == "KINSHASA"){ continent = "AFRICA"}; 
+											if(city == "ONITSHA"){ continent = "AFRICA"}; 
+
+											if(city == "SAO_PAOLO"){ continent = "SOUTH AMERICA"}; 
+											if(city == "RIO_DE_JANEIRO"){ continent = "SOUTH AMERICA"}; 
+											if(city == "LIMA"){ continent = "SOUTH AMERICA"}; 
+											if(city == "BOGOTA"){ continent = "SOUTH AMERICA"}; 
+											if(city == "BUENOS_AIRES"){ continent = "SOUTH AMERICA"}; 
+
+											if(city == "NEW_YORK"){ continent = "NORTH AMERICA"}; 
+											if(city == "MEXICO_CITY"){ continent = "NORTH AMERICA"}; 
+											if(city == "LOS_ANGELES"){ continent = "NORTH AMERICA"}; 
+											if(city == "CHICAGO"){ continent = "NORTH AMERICA"}; 
+
+											if(city == "MOSCOW"){ continent = "EUROPE"}; 
+											if(city == "PARIS"){ continent = "EUROPE"}; 
+											if(city == "LONDON"){ continent = "EUROPE"}; 
+											if(city == "ISTANBUL"){ continent = "EUROPE"};
+
+											if(city == "SYDNEY"){ continent = "AUSTRALIA"};
+											if(city == "PERTH"){ continent = "AUSTRALIA"};
+											if(city == "BRISBANE"){ continent = "AUSTRALIA"};
+											if(city == "MELBOURNE"){ continent = "AUSTRALIA"};
+
+											var today = new Date();
+								           	time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+								           	date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+								           	username_for_label = $('#name').val();
+								           	fileName = username_for_label;
+								                fileObject = new File([blob], fileName, {
+								                    type: 'video/webm'
+								                });
+								               	unique_id_before = username_for_label+"_"+date+"_"+time;
+								               	unique_id_after = unique_id_before.replace(/\s+/g, '');
+								               	console.log(unique_id_after);
+
+								 			username_data = $('#name').val();
+								            gamertag_data = $('#gamertag').val();
+								            game_data = $('#game').val();
+								            city_data = city;
+								            continent_data = continent;
+								            tag_1_data = tag_1;
+								            nop_data = nop;
+								            email_data = $('#email').val();
+											form_data.append('name', username_data);
+											form_data.append('gamertag', gamertag_data);
+											form_data.append('game', game_data);
+											form_data.append('email', email_data);
+											form_data.append('audio_data', fileObject, filename);
+											form_data.append('unique_id_data', unique_id_after);
+											form_data.append('time_uploaded', time);
+											form_data.append('date_uploaded', date);
+											form_data.append('city', city_data)
+											form_data.append('continent', continent_data)
+											form_data.append('tag_1', tag_1_data)
+											form_data.append('nop', nop_data)
+											$.ajax({
+											    type: "POST",
+											    enctype: 'multipart/form-data',
+											    url: "../php/upload_form.php",
+											    dataType: 'text',
+											    data: form_data,
+											    processData: false,
+											    contentType: false,
+											    cache: false,
+											    timeout: 600000,
+											    success: function (data) {
+											        // $(".response").html(data)
+											        // $(".details_background, .details").hide();
+											        // $(".uploaded").show();
+											        // $(".uploaded_background").show();
+											        // $(".controls").hide();
+											        window.location = "/MIX/home/";
+											    },
+											    error: function (e) {
+											        console.log("ERROR : ", e);
+											    }
+											})
+										$("#startrecording").css("background-color","#F1B700")
+										$("#saverecording, #resetrecording").css("background-color","#bbb")
+										$("#vid_stream").css("pointer-events","none")
+										document.getElementById('vid_stream').srcObject = camera;
+										$("#minutes").html("00");
+										$("#seconds").html("00");
+										totalSeconds = 0;
+									}
+								}
+							}
+						}
+					}
+				}
+			});
+
+		$("#resetrecording").click(function(){
+			username_data = 0;
+			gamertag_data = 0;
+			city_data = 0;
+			email_data = 0;
+			$("#startrecording").css("background-color","#F1B700")
+			$("#saverecording, #resetrecording, #submitrecording").css("background-color","#bbb")
+			$("#saverecording, #resetrecording, #submitrecording").css("pointer-events","none")
+			$("#startrecording").css("pointer-events","auto")
+			console.log("resetting")
+			$("#vid_stream").css("pointer-events","none")
+			document.getElementById('vid_stream').srcObject = camera;
+			$("#minutes").html("00");
+			$("#seconds").html("00");
+			totalSeconds = 0;
+		})
+    });
+
+	$(".uploaded_close").click(function(){
+		$("#saverecording, #resetrecording, #submitrecording").css("background-color","#bbb")
+		$("#saverecording, #resetrecording, #submitrecording").css("pointer-events","none")
+		$(".uploaded").hide();
+		$(".uploaded_background").hide();
+	})
+
+</script>

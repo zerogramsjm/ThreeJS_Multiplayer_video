@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>MULTIPLAYER</title>
+	<meta name="viewport" content="width=device-width, initial-scale=.7, user-scalable=0">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+	<script src="https://jevonmahoney.com/MIX/home/js/recordRTC.js"></script>
+	<link href="http://fonts.cdnfonts.com/css/neue-haas-grotesk-display-pro" rel="stylesheet">
+	<script type='text/javascript' src='js/Tween.js'></script>
+	<script type="text/javascript" src="js/cities.json"></script>
+	<link rel="shortcut icon" type="image/jpg" href="img/favicon.png"/>
+
+	<style type="text/css">
+
+	*{
+		overflow: hidden;
+		position: fixed;
+		margin: 0px;
+	}
+
+	@font-face {
+	  font-family: "Excelorate";
+	  src: url("fonts/Excelorate-Font.otf");
+	}
+
+	@font-face {
+		font-family: "Nimus-black";
+		src: url("fonts/Nimbus-Sans-D-OT-Black_32742.ttf");
+	}
+
+	:focus {
+	    outline: none !important;
+	}
+
+	input{
+		padding-top: 10px;
+		padding-bottom: 10px;
+		border-radius: 0px;
+		display: block;
+		border: none;
+		text-align: center;
+		width: 200px;
+		color: #000;
+		background-color: #fff;
+		height:  20px;
+	}
+
+	.button{
+		font-family: Nimus-black;
+		width: 200px;
+		background-color: #000;
+		color: #fff;
+		z-index: 1;
+		color: #fff;
+		border-radius: 0px;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		border: none;
+		border-radius: 50px;
+	}
+
+	.button:hover, .video_close_btn:hover{
+		cursor: pointer;
+	}
+
+	.header{
+		font-family: Excelorate;
+		width:  100vw;
+		height:  20px;
+		background-color: #F1B700;
+		top:  0px;
+		left:  0px;
+		font-size:  26px;
+		padding:  20px;
+		padding-left:  45px;
+		z-index: 2;
+	}
+
+	.search_menu_btn{
+		background-color: #fff;
+		right: 40px;
+		padding: 10px;
+		z-index: 2;
+		color:  #000;
+		width: 150px;
+		top: 150px;
+		height: auto;
+		text-align: center;
+		border-radius:  50px;
+		font-family: Nimus-black;
+	}
+
+	.random_menu_btn{
+		top: 200px;
+		width: 150px;
+		border-radius: 50px;
+		background-color: #fff;
+		color: #000;
+		z-index: 1;
+		padding: 10px;
+		right: 40px;
+		text-align: center;
+		font-family: Nimus-black;
+	}
+
+	.search_menu_btn:hover, .random_menu_btn:hover, .filters_menu_btn:hover{
+		cursor: pointer;
+	}
+
+	.upload_button{
+		font-family: Nimus-black;
+		width: 200px;
+		background-color: #000;
+		color: #fff;
+		z-index: 1;
+		color: #fff;
+		border-radius: 0px;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		border: none;
+		border-radius: 50px;
+		top: 150px;
+		right: 50px;
+	}
+
+	.search_menu_div{
+	  width: 35px;
+	  height: 5px;
+	  background-color: #fff;
+	  margin: 6px 0;
+	  position: relative;
+	  border-radius: 20px;
+	}
+
+	.menu_header{
+		font-family: Excelorate;
+		height:  20px;
+		top:  0px;
+		left:  25px;
+		font-size:  26px;
+		padding:  20px;
+		z-index: 2;
+	}
+
+	.menu_space{
+		margin-left: 0px;
+		margin-top: 0px;
+		width: 100vw;
+		height: 100vh;
+		background: rgba(230, 230, 230, 1);
+		z-index: 3;
+		display: none;
+	}
+
+	.menu_inner{
+		position: absolute;
+		z-index: 3;
+		top: 30px;
+		left: 40px;
+		height:  300px;
+	}
+
+	.search_container{
+		background-color: transparent;
+		height: 400px;
+		right: 0px;
+		top: 100px;
+		width: 210px;
+		z-index: 3;
+		display: none;
+	}
+
+	.search_input{
+		width: 158px;
+		border-radius: 50px;
+		text-align: left;
+		padding-left: 10px;
+	}
+
+	.searchbutton{
+		margin-top: 50px;
+		width: 150px;
+		border-radius: 50px;
+		background-color: #fff;
+		color: #000;
+		z-index: 1;
+		padding: 10px;
+		text-align: center;
+		font-family: Nimus-black;
+	}
+
+	.search_close{
+		margin-top: 365px;
+		width: 150px;
+		border-radius: 50px;
+		background-color: #fff;
+		color: #000;
+		z-index: 1;
+		padding: 10px;
+		text-align: center;
+		font-family: Nimus-black;
+	}
+
+	.searchbutton:hover, .search_close:hover{
+		cursor: pointer;
+	}
+
+	.search_response{
+		background-color: #000;
+		margin-top: 100px;
+		height: 230px;
+		max-height: 230px;
+		color: #fff;
+		width: 140px;
+		padding: 10px;
+		border: 3px solid #fff;
+		overflow: scroll;
+		border-radius: 10px;
+	}
+
+	.search_response_inner{
+		overflow: scroll;
+		height: 210px;
+		max-height: 210px;
+		width:  150px;
+	}
+
+	.search_response_inner_city, .search_response_inner_names, .search_response_inner_gamertag{
+		margin-bottom: 20px;
+		background-color: transparent;
+		position: relative;
+	}
+
+	.search_response_inner_city a, .search_response_inner_names a, .search_response_inner_gamertag a{
+		position: relative;
+		margin-bottom: 0px;
+		cursor: pointer;
+	}
+
+	.search_response_inner_city_header, .search_response_inner_names_header, .search_response_inner_gamertag_header{
+		position: relative;
+		font-family: "Nimus-black";
+	}
+
+	.searchreset{
+		margin-top: 50px;
+		width: 150px;
+		border-radius: 50px;
+		background-color: #fff;
+		color: #000;
+		z-index: 1;
+		padding: 10px;
+		text-align: center;
+		font-family: Nimus-black;
+		display: none;
+	}
+
+	.searchreset:hover{
+		cursor: pointer;
+	}
+
+	#canvas{
+		height: 500px;
+		position: absolute;
+		max-width: 500px;
+		z-index: 0;
+	}
+
+	.popout_video{
+		font-family: Nimus-black;
+		width: 70%;
+		height: 70vh;
+		background-color: #F1B700;
+		z-index: 10;
+		display: none;
+		left:  50%;
+		top:  50%;
+		transform: translate(-50%, -50%);
+		border-radius: 20px;
+		border:  solid #000 2px;
+		overflow: scroll;
+	}
+
+	.popout_video_inner{
+		width: calc( 100% - 90px);
+		height: 150%;
+		position: absolute;
+		text-align: center;
+		background-color: transparent;
+		overflow: scroll;
+		padding:  50px;
+	}
+
+	video{
+		position: absolute;
+		left: 0px;
+		width: 100%;
+		height: 100%;
+		top: 0px;
+	}
+
+	.video_close_btn{
+		width: 30px;
+		color: #000;
+		z-index: 2;
+		padding: 10px;
+		float: right;
+		right:  30px;
+		font-size: 60px;
+		line-height: 30px;
+		top: 20px;
+		text-align: center;
+		position: relative;
+		background-color: transparent;
+	}
+
+	.video_close_btn:after{
+	  display: inline-block;
+	  content: "\00d7";
+	}
+
+	.namespace, .gamertagspace, .cityspace, .gamespace, .datespace{
+		border-radius: 20px;
+		border: 0px solid #000;
+		position: relative;
+		top: 70%;
+		padding: 20px;
+		background-color: #299B47;
+		display: inline-block;
+		width: 25%;
+		height:  75px;
+		margin: 5px;
+	}
+
+	.popout_nameheader, .popout_gamertagheader, .popout_cityheader, .popout_gameheader, .popout_dateheader{
+		background-color: transparent;
+		width: 250px;
+		height: 20px;
+		display: block;
+		position: relative;
+		font-size: 16px;
+		left:  50%;
+		top: 20%;
+		transform: translate(-50%);
+	}
+
+	.popout_namespace, .popout_gamertagspace, .popout_gamespace, .popout_cityspace{
+		background-color: transparent;
+		width: 250px;
+		height: 20px;
+		display: block;
+		position: relative;
+		font-size: 12px;
+		left:  50%;
+		top: 20%;
+		transform: translate(-50%);
+	}
+
+	.popout_dateuploaded, .popout_timeuploaded{
+		background-color: transparent;
+		width: 250px;
+		height: 20px;
+		display: block;
+		position: relative;
+		font-size: 12px;
+		left:  50%;
+		top: 20%;
+		transform: translate(-50%);
+	}
+
+	.hover_modal{
+		padding: 10px;
+		width: 200px;
+		height: 100px;
+		background: rgba(0, 0, 0, 1);
+		z-index: 10;
+		border: 2px solid #fff;
+		color: #fff;
+		display: none;
+		border-radius: 10px;
+	}
+
+	.hover_modal:hover{
+		cursor: default;
+	}
+
+	.hover_nameheader, .hover_gamertagheader{
+		background-color: transparent;
+		width: 250px;
+		height: 20px;
+		display: block;
+		position: relative;
+		margin-bottom: 5px;
+		font-size: 14px;
+		font-family: Nimus-black;
+	}
+
+	.hover_namespace, .hover_gamertagspace{
+		background-color: transparent;
+		width: 250px;
+		height: 20px;
+		display: block;
+		position: relative;
+		margin-bottom: 5px;
+		font-size: 16px;
+		font-family: Nimus-black;
+	}
+
+	.help, .about, .contact{
+		width: 150px;
+		background-color: #D0A6B9;
+		color: #fff;
+		z-index: 1;
+		border-radius: 0px;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		border: none;
+		border-radius: 50px;
+		text-align: center;
+		font-family: Nimus-black;
+	}
+
+	.help{
+		bottom:  50px;
+		left:  50px;
+	}
+
+	.about{
+		bottom:  50px;
+		left:  250px;
+	} 
+
+	.contact{
+		bottom:  50px;
+		right:  50px;
+	}
+
+	.help:hover, .about:hover, .contact:hover{
+		cursor: pointer;
+	}
+
+	.filters_menu_btn{
+		top: 150px;
+		left: 40px;
+		width: 156px;
+		text-align: left;
+		font-family: Nimus-black;
+		border-radius: 10px;
+		height: 20px;
+		background-color: #fff;
+		border: 2px solid #000;
+		padding-top: 10px;
+		padding-left: 10px;
+		padding-bottom: 10px;
+		z-index: 5;
+	}
+
+	.arrow {
+		float: right;
+		right:  10px;
+		top:  5px;
+		position: relative;
+		border: solid black;
+		border-width: 0 3px 3px 0;
+		display: inline-block;
+		padding: 3px;
+	}
+
+	.down {
+	  	transform: rotate(45deg);
+	  	-webkit-transform: rotate(45deg);
+	}
+
+	.right {
+	  transform: rotate(-45deg);
+	  -webkit-transform: rotate(-45deg);
+	}
+
+	.filters_container{
+		display: none;
+		width: 400px;
+		top: 194px;
+		left: 30px;
+		height: 500px;
+		background-color: transparent;
+		z-index: 10;
+		opacity: 1;
+		text-align: left;
+		font-family: Nimus-black;
+	}
+	
+	.filter_inner{
+		height: 90%;
+		width: 100%;
+		background-color: transparent;
+		position: absolute;
+	}
+
+	.filter_result_count{
+		display: none;
+		background-color: #000;
+		top: 100px;
+		color: #fff;
+		left: 40px;
+		padding-top: 10px;
+		padding-left: 10px;
+		padding-right: 5px;
+		padding-bottom: 10px;
+		width: 150px;
+		z-index: 4;
+		font-family: Nimus-black;
+		border-radius: 10px;
+		border: 2px solid #fff;
+		text-align: left;
+	}
+	
+	#gamertype_option, #nop_option, #city_option, #game_option{
+		left: 10px;
+		width: 156px;
+		font-family: Nimus-black;
+		margin-bottom: 0px;
+		margin-top: 0px;
+		border-radius: 10px;
+		position: absolute;
+		height: 20px;
+		background-color: #fff;
+		border: 2px solid #000;
+		padding-top: 10px;
+		padding-left: 10px;
+		padding-bottom: 10px;
+	}
+
+	#gamertype_option{
+		margin-top: 0px;
+	}
+
+	#nop_option{
+		margin-top: 44px;
+	}
+
+	#city_option{
+		margin-top: 88px;
+	}
+
+	#game_option{
+		margin-top: 132px;
+	}
+
+	.gamer_type_filter_sub_options, .nop_filter_sub_options, .city_filter_sub_options, .game_filter_sub_options{
+		position: relative;
+		display: none;
+		left: 170px;
+		top: 44px;
+		overflow: scroll;
+		height: 330px;
+	}
+
+	.gamer_type_filter_sub_options{
+		top: 0px;
+	}
+	
+	.nop_filter_sub_options{
+		top: 44px;
+	}
+
+	.city_filter_sub_options{
+		top: 88px;
+		border-right: 10px solid #D0A6B9;
+		width: 180px;
+	}
+
+	.game_filter_sub_options{
+		top: 132px;
+	}
+
+	.game_filter_sub_options{
+		text-decoration: none;
+		color: #000;
+	}
+
+	.gamer_type_filter_sub_options a, .nop_filter_sub_options a, .nop_filter_sub_options a, .city_filter_sub_options a, .game_filter_sub_options a{
+		width: 156px;
+		font-family: Nimus-black;
+		margin-bottom: 0px;
+		margin-top: 0px;
+		border-radius: 10px;
+		position: relative;
+		height: auto;
+		background-color: #fff;
+		border: 2px solid #000;
+		padding-top: 10px;
+		padding-left: 10px;
+		padding-bottom: 10px;
+		left: 10px;
+		display: block;
+	}
+
+	.filter_options:hover, .gamer_type_filter_sub_options a:hover, .nop_filter_sub_options a:hover, .city_filter_sub_options a:hover, .game_filter_sub_options a:hover{
+		cursor: pointer;
+	}
+
+	/* MOBILE - - - - - - - - - - - - - - - - - - */
+
+	.mobile_menu{
+		display: none;
+	}
+
+	.mobile_menu_btn{
+		display: none;
+		top: 17px;
+		background-color: transparent;
+		height: 50px;
+		right: 20px;
+		z-index: 5;
+		text-align: center;
+		width: 40px;
+	}
+
+	.mobile_menu_btn span {
+	  display: block;
+	  position: absolute;
+	  height: 6px;
+	  width: 100%;
+	  background: #000;
+	  border-radius: 10px;
+	  opacity: 1;
+	  left: 0;
+	  -webkit-transform: rotate(0deg);
+	  -moz-transform: rotate(0deg);
+	  -o-transform: rotate(0deg);
+	  transform: rotate(0deg);
+	  -webkit-transition: .25s ease-in-out;
+	  -moz-transition: .25s ease-in-out;
+	  -o-transition: .25s ease-in-out;
+	  transition: .25s ease-in-out;
+	}
+
+	.mobile_menu_btnspan:nth-child(1) {
+	  top: 0px;
+	}
+
+	.mobile_menu_btn span:nth-child(2) {
+	  top: 10px;
+	}
+
+	.mobile_menu_btn span:nth-child(3) {
+	  top: 20px;
+	}
+
+	@media only screen and (max-width: 890px) {
+
+	.popout_video_inner{
+		height: auto;
+    	top: 100%;
+	}
+
+	.namespace, .gamertagspace, .cityspace, .gamespace, .datespace{
+			width: 80%;
+		}
+
+		.mobile_menu_btn{
+			display: block;
+		}
+
+		.mobile_menu{
+			display: none;
+			background-color: #F1B700;
+			width: 100vw;
+			height: 100vh;
+			top:  0px;
+			left: 0px;
+			z-index: 5;
+		}
+
+		.mobile_menu_inner{
+			width: 100%;
+			height: 80%;
+			position: absolute;
+			background-color: #F1B700;
+			left:  50%;
+			top: 10px;
+			transform: translate(-50%);
+		}
+
+		.mobile_menu h1{
+			font-family: "Excelorate";
+			padding: 10px;
+			left: 35px;
+			font-size:  26px;
+		}
+
+		.mobile_menu_buttons_middle{
+			top: 15vh;
+			background-color: #F1B700;
+			width: 100%;
+			height: 90%;
+		}
+
+		.help, .about, .contact{
+			display: none;
+		}
+
+		.mobile_menu_close_btn{
+			color: #000;
+			z-index: 2;
+			padding: 0px;
+			float: right;
+			right: 15px;
+			font-size: 30px;
+			top: -30px;
+			text-align: center;
+			position: relative;
+			background-color: transparent;
+			font-size: 90px;
+		}
+
+		.mobile_menu_close_btn:after{
+		  display: inline-block;
+		  content: "\00d7";
+		}
+
+		.random_menu_btn_mobile, .help_mobile, .about_mobile, .upload_mobile{
+			width: 150px;
+			border-radius: 50px;
+			background-color: #fff;
+			border: 2px solid #000;
+			color: #000;
+			z-index: 1;
+			padding: 10px;
+			text-align: center;
+			font-family: Nimus-black;
+			margin-top: 20px;
+			display: block;
+			position: relative;
+			top: 50px;
+			left: 50%;
+			transform: translate(-50%);
+			cursor: pointer;
+		}
+
+		.random_menu_btn{
+			display: none;
+		}
+
+		.search_menu_btn{
+		}
+
+	}
+
+	.loading{
+		width: 100vw;
+		height: 100vh;
+		background-color: #F1B700;
+		color: #fff;
+		z-index: 10;
+		display: block;
+		top: 0px;
+		display: block;
+	}
+
+	.loading_after{
+		width: 100vw;
+		height: 100vh;
+		background-color: #F1B700;
+		color: #fff;
+		z-index: 10;
+		display: block;
+		top: 100vh;
+	}
+
+	.loading_inner{
+		width: 200px;
+		height: 200px;
+		left: 50%;
+		top:  50%;
+		transform: translate(-50%, -50%);
+		text-align: center;
+	}
+
+	.loading_inner h1{
+		font-family: Excelorate;
+		font-size: 22px;
+	}
+
+	.loading img{
+		width: 20%;
+		height: auto;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+	}
+
+
+	</style>
+
+</head>
+<body>
+
+	<div class="header">Multiplayer</div>
+
+	<div class="loading">
+		<div class="loading_inner">
+			<h1>MULITPLAYER</h1>
+		</div>
+		<img id="loading_img" src="img/globe_loader.gif">
+	</div>
+
+	<div id="canvas"></div>
+
+	<div class="search_menu_btn">	
+		SEARCH
+	</div>
+
+	<div class="random_menu_btn">	
+		RANDOM
+	</div>
+
+	<div class="filter_result_count"></div>
+	<div class="filters_menu_btn">	
+		FILTERS <i class="arrow down"></i>
+	</div>
+	<div class="filters_container">
+		<div class="filter_inner">
+			<div id="gamertype_option" class="filter_options">
+				GAMER TYPE <i class="arrow right"></i>
+			</div>
+			<div id="nop_option" class="filter_options">
+				NO. PLAYERS <i class="arrow right"></i>
+			</div>
+			<div id="city_option" class="filter_options">
+				CITY <i class="arrow right"></i>
+			</div>
+			<div id="game_option" class="filter_options">
+				GAME <i class="arrow right"></i>
+			</div>
+			<div class="gamer_type_filter_sub_options">
+				<a id="WEEKEND GAMER">WEEKEND GAMER</a>
+				<a id="DESTRUCTIVE">DESTRUCTIVE</a>
+				<a id="SOCIAL GAMER">SOCIAL GAMER</a>
+				<a id="COMPETITIVE">COMPETITIVE</a>
+				<a id="BACKSEAT">BACKSEAT</a>
+				<a id="OLDSCHOOL">OLDSCHOOL</a>
+				<a id="TROPHY HUNTER">TROPHY HUNTER</a>
+			</div>
+			<div class="nop_filter_sub_options">
+				<a id="1">1</a>
+				<a id="2">2</a>
+				<a id="3">3</a>
+				<a id="4">4</a>
+				<a id="5">5</a>
+				<a id="6">6</a>
+				<a id="6+">6+</a>
+			</div>
+			<div class="city_filter_sub_options">
+			</div>
+			<div class="game_filter_sub_options">
+				<a id="1">1</a>
+				<a id="2">2</a>
+				<a id="3">3</a>
+				<a id="4">4</a>
+				<a id="5">5</a>
+				<a id="6">6</a>
+				<a id="6+">6+</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="search_container">
+		<input class="search_input" type="text" id="search" placeholder="CITY, GAMERTAG, NAME" name="city">
+			<div class="searchbutton" id="searchbutton">SEARCH</div>
+			<div class="searchreset">RESET SEARCH</div>
+			<div class="search_response"><br/>
+				<div class="search_response_inner">	
+					<div class="search_response_inner_city_header">Players in matching City:</div>
+					<div class="search_response_inner_city"></div>
+					<div class="search_response_inner_names_header">Players with matching Names:</div>
+					<div class="search_response_inner_names"></div>
+					<div class="search_response_inner_gamertag_header">Players with matching Gamertags:</div>
+					<div class="search_response_inner_gamertag"></div>
+				</div>
+			</div>
+			<div class="search_close">CLOSE SEARCH</div>
+	</div>
+
+	<div class="popout_video">
+		<div class="video_close_btn"></div>
+		<video id="video" controls width="320" height="240"></video>
+		<div class="popout_video_inner">
+			<div class="namespace">
+				<div class="popout_nameheader">NAME</div>
+				<div class="popout_namespace">HELLO</div>
+			</div>
+			<div class="gamertagspace">
+				<div class="popout_gamertagheader">GAMERTAG</div>
+				<div class="popout_gamertagspace">HELLO</div>
+			</div>
+			<div class="cityspace">
+				<div class="popout_cityheader">CITY</div>
+				<div class="popout_cityspace">HELLO</div>
+			</div>
+			<div class="gamespace">
+				<div class="popout_gameheader">GAME</div>
+				<div class="popout_gamespace">HELLO</div>
+			</div>
+			<div class="datespace">
+				<div class="popout_dateheader">UPLOADED</div>
+				<div class="popout_dateuploaded">DATE</div>
+				<div class="popout_timeuploaded">DATE</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="hover_modal">
+		<div class="hover_nameheader">Name:</div>
+		<div class="hover_namespace"></div>
+		<div class="hover_gamertagheader">Tag:</div>
+		<div class="hover_gamertagspace"></div>
+	</div>
+
+	<div class="help">HELP</div>
+	<div class="about">ABOUT</div>
+	<div id="upload_button" class="contact">UPLOAD</div>
+
+	<div class="mobile_menu_btn">
+	  <span></span>
+	  <span></span>
+	  <span></span>
+	</div>
+
+	<div class="mobile_menu">
+		<div class="mobile_menu_inner">
+			<div class="mobile_menu_close_btn"></div>
+			<h1>MENU</h1>
+			<div class="mobile_menu_buttons_middle">
+				<div id="upload_button_mobile" class="upload_mobile">UPLOAD</div>
+				<div class="random_menu_btn_mobile">RANDOM</div>
+				<div id="help_mobile" class="help_mobile">HELP</div>
+				<div id="about_mobile" class="about_mobile">ABOUT</div>
+			</div>
+		</div>
+	</div>
+
+		<script type="module">
+
+			import * as THREE from '../build/three.module.js';
+
+			import { OrbitControls } from './jsm/controls/OrbitControls.js';
+			import { GLTFLoader } from './jsm/loaders/GLTFLoader.js';
+			import { OBJLoader } from './jsm/loaders/OBJLoader.js';
+			import { MTLLoader } from './jsm/loaders/MTLLoader.js';
+			import { EffectComposer } from './jsm/postprocessing/EffectComposer.js';
+			import { RenderPass } from './jsm/postprocessing/RenderPass.js';
+			import { UnrealBloomPass } from './jsm/postprocessing/UnrealBloomPass.js';
+
+			let camera, controls, scene, renderer, composer;
+
+			var all_video_data;
+
+			var earth = new THREE.Object3D();
+			var markers = new THREE.Object3D();
+
+				// ASIA
+				var TOKYO_position = new THREE.Vector3 (80, 85, -136); 
+				var SEOUL_INCHEON_position = new THREE.Vector3 (94.755,97.252,-118.166); 
+				var SHANGHAI_position = new THREE.Vector3 (122.79,68.12,-112.609); 
+				var BEIJING_position = new THREE.Vector3(100, 80, -100);
+				var GUANGZHOU_FOSHAN_position = new THREE.Vector3 (135.60,60.43,-101.78); 
+				var OSAKA_KOBE_KYOTO_position = new THREE.Vector3 (83.99,81.25,-136.90); 
+				var BANGKOK_position = new THREE.Vector3 (159.97,27.076,-77.93); 
+				var SHENZHEN_position = new THREE.Vector3 (131.72,56.8060,-108.7); 
+				var TIANJIN_position = new THREE.Vector3 (122.657,84.28,-101.25); 
+				var CHENGDU_position = new THREE.Vector3 (145.078,81.93,-68.11); 
+				var TAIPEI_position = new THREE.Vector3 (121.19,53.53,-121.84); 
+				var LAHORE_position = new THREE.Vector3 (162.094,77.19,12.888); 
+				var HO_CHI_MINH_CITY_position = new THREE.Vector3 (154.859,25.956,-88.00); 
+				var NAGOYA_position = new THREE.Vector3 (69.533,88.85,-140.25); 
+				var CHENNAI_position = new THREE.Vector3 (176.709,31.443,-13.60); 
+				var DONGGUAN_position = new THREE.Vector3 (133.818,57.77,-105.61); 
+				var WUHAN_position = new THREE.Vector3 (139.04,73.97,-87.15); 
+				var HANGZHOU_position = new THREE.Vector3 (120.945,69.502,-113.76); 
+				var HANOI_position = new THREE.Vector3 (150.4874,45.89,-87.44); 
+				var CHONGQING_position = new THREE.Vector3 (147.06,77.12,-69.45); 
+
+				//INDIA
+				var KOLKATA_position = new THREE.Vector3 (165.38,57.65,-41.50); 
+				var BANGALORE_position = new THREE.Vector3 (175.665,39.088,-3.706); 
+				var HYDERABAD_position = new THREE.Vector3 (173.955,45.69,-7.149);
+				var AHMADABAD_position = new THREE.Vector3 (163.38,69.57,29.41); 
+				var KUALA_LUMPUR_position = new THREE.Vector3 (156.61,-18.35,-86.79); 
+				var SINGAPORE_position = new THREE.Vector3(150, -10, -70);
+				var MANILA_position = new THREE.Vector3 (126.78,25.077,-125.2); 
+				var MUMBAI_position = new THREE.Vector3 (175.59,37.381,12.9); 
+				var KARACHI_position = new THREE.Vector3 (165.7,60.3,35.95); 
+				var TEHRAN_position = new THREE.Vector3 (151.09,85.44,47.61); 
+				var JAKARTA_position = new THREE.Vector3 (144, -27, -103.22148790543893); 
+				var DELHI_position = new THREE.Vector3 (168.322,62.884,10.6266); 
+
+				// AFRICA
+				var CAIRO_position = new THREE.Vector3 (118.8,66.5,117.6); 
+				var LAGOS_position = new THREE.Vector3 (53.11,14.64,171.36); 
+				var KINSHASA_position = new THREE.Vector3 (86.32,-9.54,157.66); 
+				var ONITSHA_position = new THREE.Vector3 (69.94,9.34,165.58); 
+
+				// SOUTH AMERICA
+				var SAO_PAOLO_position = new THREE.Vector3 (-92.87,-66.02,139.33); 
+				var RIO_DE_JANEIRO_position = new THREE.Vector3 (-79.85,-58.97,150.153); 
+				var LIMA_position = new THREE.Vector3 (-150.57,-44.355,88.08); 
+				var BOGOTA_position = new THREE.Vector3 (-149.8,17.759,98.170); 
+				var BUENOS_AIRES_position = new THREE.Vector3 (-106.8,-90.57,113.08); 
+
+				// NORTH AMERICA
+				var NEW_YORK_position = new THREE.Vector3 (-128.297,99.434,77.79); 
+				var MEXICO_CITY_position = new THREE.Vector3 (-173.14,41.309,26.71); 
+				var LOS_ANGELES_position = new THREE.Vector3 (-151.70,87.88,-40.779); 
+				var CHICAGO_position = new THREE.Vector3 (-141.90,104.15,37.60); 
+
+				// EUROPE
+				var MOSCOW_position = new THREE.Vector3 (99.09,135.509,64.94); 
+				var PARIS_position = new THREE.Vector3 (46.53,114.18,131.13); 
+				var LONDON_position = new THREE.Vector3(25, 110, 115);
+				var ISTANBUL_position = new THREE.Vector3 (103.06,98.12,110.22); 
+
+				// AUSTRALIA
+				var SYDNEY = new THREE.Vector3 (39.87,-94.56,-147.87); 
+				var PERTH = new THREE.Vector3 (126.096,-80.96,-99.72); 
+				var BRISBANE = new THREE.Vector3 (49.03,-62.82,-161.39); 
+				var MELBOURNE = new THREE.Vector3 (59.55,-100.185,-137.17); 
+
+				// CONTINENT POSITIONS
+			var ASIA = new THREE.Vector3( 316.57, 73.748, -225.14);
+			var EUROPE = new THREE.Vector3(152, 243, 254);
+			var AFRICA = new THREE.Vector3(217, 31, 314);
+			var NORTH_america = new THREE.Vector3(-277, 264, 22);
+			var SOUTH_america = new THREE.Vector3(-270, -81, 260);
+			var ANTARTICA = new THREE.Vector3(0, 383, 0);
+			var AUSTRALIA = new THREE.Vector3(188, -152, -297);
+			var INDIA = new THREE.Vector3(331.659, 176.250, -6.760);
+
+			var sg, sm, s;
+
+			var raycaster = new THREE.Raycaster();
+			var mouse = new THREE.Vector2();
+
+			var rmax = 3;
+			var rmin = 0;
+
+			var video = document.getElementById('video');
+			var source = document.createElement('source');
+			
+			var clicked_video_link;
+			var hovering_video_link, hovering_video_name, hovering_video_gamertag, hovering_video_city, hovering_video_date, hovering_video_time;
+
+			var pos;
+
+			var a = [];
+
+			let names = "";
+			let namesmarkerid;
+			let gamertag = "";
+			let gamertagmarkerid = "";
+			let namesmatching = "";
+			let namesmatchingmarkerid;
+
+			let toremove = [];
+
+    		var hovering_result;
+
+    		var tg, tm, torus;
+
+    		var all_videos_list = [];
+
+    		var w;
+
+			init();
+			animate();
+
+			function init() {
+
+				scene = new THREE.Scene();
+				scene.background = new THREE.Color( 0x000000 );
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				var container = document.getElementById( 'canvas' );
+				document.body.appendChild( container );
+				container.appendChild( renderer.domElement );
+
+				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
+				camera.position.set( 400, 200, 0 );
+
+				controls = new OrbitControls( camera, renderer.domElement );
+
+				const renderScene = new RenderPass( scene, camera );
+				const bloomPass = new UnrealBloomPass( new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.5, 0.4, 0.85 );
+				
+				bloomPass.threshold = 0;
+				bloomPass.strength = 3;
+				bloomPass.radius = 0;
+				bloomPass.exposure = 0;
+
+				composer = new EffectComposer( renderer );
+				composer.addPass( renderScene );
+				composer.addPass( bloomPass );
+
+				controls.enableDamping = true;
+				controls.dampingFactor = 0.05;
+				controls.screenSpacePanning = false;
+				controls.enablePan = false;
+				controls.minDistance = 180;
+				controls.maxDistance = 700;
+				controls.zoomSpeed = .2;
+				controls.rotateSpeed = 0.15;
+				
+				const pointLight = new THREE.PointLight( 0xffffff, 1 );
+				camera.add( pointLight );
+
+				const ambientLight = new THREE.AmbientLight( 0x222222 );
+				scene.add( ambientLight );
+
+				const manager = new THREE.LoadingManager();
+
+				const loader = new GLTFLoader();
+				loader.load("models/planet_development/globe.gltf",function(gltf){
+					earth.add(gltf.scene);
+				});
+
+				earth.scale.set(.99,.99,-.99);
+
+				var isg = new THREE.IcosahedronGeometry( 150, 8 );
+				var ism = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: true })
+				var ism = new THREE.Mesh( isg, ism );
+				earth.add(ism);
+
+				scene.add(earth);
+
+				window.addEventListener( 'resize', onWindowResize );
+
+				sg = new THREE.SphereGeometry( 2 );
+				sm = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+
+				const starg = new THREE.ConeGeometry( 2, 2, 3 );
+
+				for ( let i = 0; i < 200; i ++ ) {
+					const object = new THREE.Mesh( starg, new THREE.MeshLambertMaterial( { color: 0xffffff, wireframe: true } ) );
+					object.position.x = Math.random() * 800 - 400; object.position.y = Math.random() * 800 - 400; object.position.z = Math.random() * 800 - 400; 
+					object.rotation.x = Math.random() * 2 * Math.PI; object.rotation.y = Math.random() * 2 * Math.PI; object.rotation.z = Math.random() * 2 * Math.PI;
+					object.scale.x = Math.random() + 0.5; object.scale.y = Math.random() + 0.5; object.scale.z = Math.random() + 0.5;
+					scene.add( object );
+				}
+
+				setTimeout(function(){
+					$(".loading_inner").fadeOut(1000);
+					setTimeout(function(){
+						$(".loading img").fadeOut(1000);
+							setTimeout(function(){
+							$(".loading").addClass('loading_after', {duration:500});
+						},1000)
+					},1000)
+				},3000)
+
+			}
+
+			function onWindowResize() {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+			}
+
+			var t = 0;
+
+			function mouseclick( event ) {
+				console.log(camera.position);
+				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+				mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+					const intersects = raycaster.intersectObjects( markers.children );
+					for ( let i = 0; i < intersects.length; i ++ ) {
+						click();
+				}
+			}
+
+			function onMouseMove( event ) {
+					mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+					mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+					raycaster.setFromCamera( mouse, camera );
+						const intersects = raycaster.intersectObjects( markers.children );
+						if (intersects.length>0) {
+							document.getElementById("canvas").style.cursor = "pointer";
+							if (w>890) {
+								$('.hover_modal').show();
+								$('.hover_modal').css('top', event.pageY+20);
+					    		$('.hover_modal').css('left', event.pageX+20);
+					    	}else{
+					    		$('.hover_modal').hide();
+					    	}
+					    }
+						else{
+							document.getElementById("canvas").style.cursor = "default";
+							$('.hover_modal').hide();
+						}
+						for ( let i = 0; i < intersects.length; i ++ ) {
+							hovering_result = intersects[i].object.name;
+							check();
+					}
+			}
+
+			function touchEnd( event ) {
+				event.preventDefault();
+				console.log(camera.position);
+				mouse.x = (event.changedTouches[0].clientX / window.innerWidth) * 2 - 1;
+				mouse.y = -(event.changedTouches[0].clientY / window.innerHeight) * 2 + 1;
+					const intersects = raycaster.intersectObjects( markers.children );
+					for ( let i = 0; i < intersects.length; i ++ ) {
+						click();
+				}
+			}
+
+			function onTouchMove( event ) {
+				mouse.x = (event.changedTouches[0].clientX / window.innerWidth) * 2 - 1;
+				mouse.y = -(event.changedTouches[0].clientY / window.innerHeight) * 2 + 1;
+				raycaster.setFromCamera( mouse, camera );
+					const intersects = raycaster.intersectObjects( markers.children );
+					for ( let i = 0; i < intersects.length; i ++ ) {
+						hovering_result = intersects[i].object.name;
+						check();
+				}
+			}
+
+			function animate() {
+				w = window.innerWidth;
+				requestAnimationFrame( animate );
+				t+=1;
+				controls.update();
+				render();
+			}
+
+			function render() {
+				TWEEN.update();
+				raycaster.setFromCamera( mouse, camera );
+				composer.render();
+			}
+
+			$(document).on("click touchend", '#upload_button', function(e) {
+				console.log("clicked")
+				window.location = "upload";
+			})
+
+			$(document).on("click touchend", '#upload_button_mobile', function(e) {
+				window.location = "upload";
+			})
+
+			$("#searchbutton").click(function(){
+				var search_data = $('#search').val();
+				var search_form_data = new FormData();
+				search_form_data.append('search', search_data);
+				$.ajax({
+				    type: "POST",
+				    enctype: 'multipart/form-data',
+				    url: "php/search.php",
+				    dataType: 'json',
+				    data: search_form_data,
+				    processData: false,
+				    contentType: false,
+				    cache: false,
+				    timeout: 600000,
+				    success: function (data) {
+				    	$(".searchreset").show();
+				    	$(".searchbutton").hide();
+				        	// MATCHING CITY DATA
+				        	var cd = data[0];
+				        	markers.traverse(function(child){
+				        		a.push(child.name)
+				        	})
+				        	for( var c = 0; c < cd.length; c++){
+				        		names += "<a id="+cd[c].unique_id+">"+cd[c].name+"</a><BR/>";
+				        		namesmarkerid = cd[c].unique_id;
+				        		markers.traverse(function(child){
+				        			if (child.name==namesmarkerid) {
+				        				child.material = new THREE.MeshBasicMaterial({ color: 0xffffff })
+				        			}
+				        		})
+				        	}
+				        	// MATCHING NAME DATA
+				        	var nd = data[1];
+				        	for( var n = 0; n < nd.length; n++){
+				        		namesmatching += "<a id="+nd[n].unique_id+">"+nd[n].name+"<BR/>";
+				        		namesmatchingmarkerid = nd[n].unique_id;
+				        		markers.traverse(function(child){
+				        			if (child.name==namesmatchingmarkerid) {
+				        				child.material = new THREE.MeshBasicMaterial({ color: 0xFF69B4 })
+				        			}
+				        		})
+				        	}
+				        	// MATCHING GAMERTAGS
+				        	var gd = data[2];
+				        	for( var g = 0; g < gd.length; g++){
+				        		gamertag += "<a id="+gd[g].unique_id+">"+gd[g].name+"<BR/>";
+				        		gamertagmarkerid = gd[g].unique_id;
+				        		markers.traverse(function(child){
+				        			if (child.name==gamertagmarkerid) {
+				        				child.material = new THREE.MeshBasicMaterial({ color: 0xFFFF00 })
+				        			}
+				        		})
+				        	}
+				        	$(".search_input").hide();
+    						$(".search_response_inner_city").html(names)
+    						$(".search_response_inner_names").html(namesmatching)
+    						$(".search_response_inner_gamertag").html(gamertag)
+				    },
+				    error: function (e) {
+				        console.log("ERROR : ", e);
+				    }
+				})
+			})
+
+			$(".searchreset").click(function(){
+				reset_search_params();
+    		})
+
+    		// SELECTING VIDEO FROM THE SEARCH RESULTS - - - - - - - - - - - -
+
+			$(document).on("mouseover", '.search_response_inner_city a, .search_response_inner_names a, .search_response_inner_gamertag', function(e) {
+				hovering_result = this.id;
+					check();
+			})
+			$(document).on("click", '.search_response_inner_city a, .search_response_inner_names a, .search_response_inner_gamertag a', function(e) {
+					click();
+			})
+			function check(){
+				var clicked_video = hovering_result;
+				var clicked_video_form_data = new FormData();
+					clicked_video_form_data.append('ui', clicked_video);
+					$.ajax({
+				    	type: "POST",
+				    	enctype: 'multipart/form-data',
+				    	url: "php/videos_selected.php",
+				    	data: clicked_video_form_data,
+				    	dataType: 'json',
+				    	processData: false,
+				    	contentType: false,
+				    	cache: false,
+				    	timeout: 600000,
+				    success: function (data) {
+				    	hovering_video_link = data[0].video_recording;
+				    	hovering_video_name = data[0].name;
+				    	hovering_video_gamertag = data[0].gamertag;
+				    	hovering_video_city = data[0].city;
+				    	hovering_video_date = data[0].date_uploaded;
+				    	hovering_video_time = data[0].time_uploaded;
+				    	$(".hover_namespace").html(hovering_video_name)
+						$(".hover_gamertagspace").html(hovering_video_gamertag)
+				    },
+				    error: function (e) {
+				        console.log("ERROR : ", e);
+				    }
+				})
+			}
+			function click(){
+				controls.zoommEnabled = false;
+				$(".popout_video").show();
+				source.setAttribute('src', 'videos/'+hovering_video_link);
+				video.appendChild(source);
+				video.load();
+				video.pause();
+				$(".popout_namespace").html(hovering_video_name)
+				$(".popout_gamertagspace").html(hovering_video_gamertag)
+				$(".popout_cityspace").html(hovering_video_city)
+				$(".popout_dateuploaded").html(hovering_video_date)
+				$(".popout_timeuploaded").html(hovering_video_time)
+			}
+
+			get_videos();
+
+			function get_videos(){
+				console.log("loading videos")
+				$.ajax({
+				    type: "POST",
+				    enctype: 'multipart/form-data',
+				    url: "php/get_all_videos.php",
+				    dataType: 'json',
+				    processData: false,
+				    contentType: false,
+				    cache: false,
+				    timeout: 600000,
+				    success: function (data) {
+				    	all_video_data = data;
+				    	calldata();
+				    },
+				    error: function (e) {
+				        console.log("ERROR : ", e);
+				    }
+				})
+			}
+
+			function calldata(){
+				for (let i = 0; i < all_video_data.length; i++) {
+					s = new THREE.Mesh( sg, sm );
+					// if (all_video_data[i].city=="BEIJING") {
+						var pname = all_video_data[i].city;
+						var posl = eval(pname+"_position");
+						pos = eval(pname+"_position");
+						pos.x += Math.random() * 10 - 5;
+						pos.y += Math.random() * 10 - 5;
+						pos.z += Math.random() * 10 - 5;
+						s.position.copy(pos);
+						s.position.normalize();
+						s.position.multiplyScalar( 165 );
+						s.name = all_video_data[i].unique_id;
+						all_videos_list.push(all_video_data[i].unique_id);
+						markers.add( s );
+						scene.add( markers )
+					// }
+				}
+			}
+
+			function menu_btn_back(){
+				$(".menu_btn").fadeIn();
+			}
+
+			$(document).on("click touchend", '.video_close_btn', function(e) {
+				controls.zoommEnabled = true;
+				$(".popout_video").hide();
+			})
+
+			$(document).on("click touchend", '.search_menu_btn', function(e) {
+				markers.traverse(function(child){
+					child.material = new THREE.MeshBasicMaterial({ color: 0xff0000 })
+					child.material.opacity = 1;
+				})
+				$(".search_container").show();
+				$(".search_menu_btn").hide();
+				$(".menu_btn").hide();
+				$(".random_menu_btn").hide();
+				$(".filters_menu_btn").hide();
+				$(".filters_container").hide();
+				$(".filters_menu_btn").html("FILTERS");
+				$(".filter_result_count").hide();
+				$(".city_filter_sub_options").hide();
+				$(".gamer_type_filter_sub_options").hide();
+				$(".nop_filter_sub_options").hide();
+			})
+
+			$(document).on("click touchend", '.search_close', function(e) {
+				reset_search_params();
+				$(".search_container").hide();
+				$(".search_menu_btn").show();
+				$(".menu_btn").show();
+				
+				if (w > 890) {
+					$(".random_menu_btn").show();
+				}
+				$(".filters_menu_btn").show();
+			})
+
+			function reset_search_params(){
+				$(".search_input").show();
+				$("#search").val("")
+    			$(".search_response_inner_city").html("")
+    			$(".search_response_inner_names").html("")
+    			$(".search_response_inner_gamertag").html("")		
+				names = "";
+				namesmarkerid = "";
+				gamertag = "";
+				gamertagmarkerid = "";
+				namesmatching = "";
+				namesmatchingmarkerid = "";
+				markers.traverse(function(child){
+					child.material = new THREE.MeshBasicMaterial({ color: 0xff0000 })
+					child.material.opacity = 1;
+				})
+				a = [];
+				toremove = [];
+				$(".searchbutton").show();
+				$(".searchreset").hide();
+			}
+
+			$(document).on("click touchend", '.filters_menu_btn', function(e) {
+				$(".filters_container").toggle();
+				$(this).html() == "HIDE FILTERS" ? $(this).html('FILTERS') : $(this).html('HIDE FILTERS');
+				$(".search_menu_btn").toggle();
+				if (w>890) {
+					$(".random_menu_btn").toggle();
+				}
+			});
+
+			// GAMER TYPE FILTER MENU HOVER - - - - - - - 
+			$(document).on("click touchend", '#gamertype_option, .gamer_type_filter_sub_options', function(e) {
+				$(".gamer_type_filter_sub_options").show();
+				$(".nop_filter_sub_options").hide();
+				$(".city_filter_sub_options").hide();
+				$(".game_filter_sub_options").hide();
+			});
+
+			// NUMBER OF PLAYERS FILTER MENU HOVER - - - - - - - 
+			$(document).on("click touchend", '#nop_option, .nop_filter_sub_options', function(e) {
+				$(".gamer_type_filter_sub_options").hide();
+				$(".nop_filter_sub_options").show();
+				$(".city_filter_sub_options").hide();
+				$(".game_filter_sub_options").hide();
+			});
+
+			// CITIES FILTER MENU HOVER - - - - - - - 
+			$(document).on("click touchend", '#city_option, .city_filter_sub_options', function(e) {
+				$(".gamer_type_filter_sub_options").hide();
+				$(".nop_filter_sub_options").hide();
+				$(".city_filter_sub_options").show();
+				$(".game_filter_sub_options").hide();
+			});
+
+			// CITIES FILTER MENU HOVER - - - - - - - 
+			$(document).on("click touchend", '#game_option, .game_filter_sub_options', function(e) {
+				$(".gamer_type_filter_sub_options").hide();
+				$(".nop_filter_sub_options").hide();
+				$(".city_filter_sub_options").hide();
+				$(".game_filter_sub_options").show();
+			});
+
+			// FILL CITY FILTER LIST  - - - - - - - - - - - - - - - - 	
+
+			let cities = "";
+			pop_city_filter();
+			function pop_city_filter(){
+			    var citylistdata = JSON.parse(data);
+				for (var c = 0; c < citylistdata.length; c++){
+					var city_underscore = citylistdata[c].city.replace(/\s/g, '_');
+					cities += "<a id="+city_underscore+">"+citylistdata[c].city+"</a>";
+					$(".city_filter_sub_options").html(cities)
+				}
+			}
+
+			let games = "";
+			pop_game_filter();
+			function pop_game_filter(){
+				var game_click_form = new FormData();
+					$.ajax({
+				    	type: "POST",
+				    	enctype: 'multipart/form-data',
+				    	url: "php/get_all_videos.php",
+				    	data: game_click_form,
+				    	dataType: 'json',
+				    	processData: false,
+				    	contentType: false,
+				    	cache: false,
+				    	timeout: 600000,
+				    success: function (data) {
+				    	for( var g = 0; g < data.length; g++){
+				    		console.log(data[g].game)
+				    		var game_underscore = data[g].game.replace(/\s/g, '_');
+				    		games += "<a id="+game_underscore+">"+data[g].game+"</a>";
+				    		$(".game_filter_sub_options").html(games)
+				    	}
+				    },
+				    error: function (e) {
+				        console.log("ERROR : ", e);
+				    }
+				})
+			}
+
+			// FILTER RESULT - - - - - - - - - - - 
+
+			var gamer_tag_data = [];
+			var nop_filter_data = [];
+			var city_filter_data = [];
+
+			var grd = [];
+			var nrd = [];
+			var crd = [];
+
+			var gamerbutton = false;
+			var numberbutton = false;
+			var citybutton = false;
+
+			$(document).on("click touchend", '.gamer_type_filter_sub_options a, .nop_filter_sub_options a, .city_filter_sub_options a, .game_filter_sub_options a', function(e) {
+				scene.remove( torus );
+				var parentDiv = this.parentNode;
+				var parentclass = parentDiv.getAttribute("class");
+				console.log(parentclass)
+				var filter_click_form = new FormData();
+
+				var clicked_filter, nop_clicked_filter, city_clicked_filter, game_clicked_filter;
+
+				if(parentclass=="gamer_type_filter_sub_options"){
+					$("#gamertype_option").html(this.id);
+						clicked_filter = this.id;
+						nop_clicked_filter = $("#nop_option").html();
+						city_clicked_filter = $("#city_option").html();
+						game_clicked_filter = $("#game_option").html()
+							$("#gamertype_option").css("height","auto")
+							$("#gamertype_option").css("z-index","3")
+								$("#nop_option").css("z-index","2")
+								$("#city_option").css("z-index","2")
+								$("#game_option").css("z-index","2")
+				}
+				if(parentclass=="nop_filter_sub_options"){
+					$("#nop_option").html(this.id);
+						clicked_filter = $("#gamertype_option").html()
+						nop_clicked_filter = this.id;
+						city_clicked_filter = $("#city_option").html()
+						game_clicked_filter = $("#game_option").html()
+						$("#nop_option").css("height","auto")
+							$("#gamertype_option").css("z-index","2")
+								$("#nop_option").css("z-index","3")
+								$("#city_option").css("z-index","2")
+								$("#game_option").css("z-index","2")
+				}
+				if(parentclass=="city_filter_sub_options"){
+					$("#city_option").html(this.id);
+						clicked_filter = $("#gamertype_option").html()
+						nop_clicked_filter = $("#nop_option").html();
+						city_clicked_filter = this.id;
+						game_clicked_filter = $("#game_option").html()
+						$("#city_option").css("height","auto")
+							$("#gamertype_option").css("z-index","2")
+								$("#nop_option").css("z-index","2")
+								$("#city_option").css("z-index","3")
+								$("#game_option").css("z-index","2")
+				}
+				if(parentclass=="game_filter_sub_options"){
+					var c = this.id.replace("_"," ")
+					var x = c.replace("_"," ")
+					$("#game_option").html(x);
+						clicked_filter = $("#gamertype_option").html()
+						nop_clicked_filter = $("#nop_option").html();
+						city_clicked_filter = $("#city_option").html()
+						game_clicked_filter = this.id;
+						$("#game_option").css("height","auto")
+							$("#gamertype_option").css("z-index","2")
+								$("#nop_option").css("z-index","2")
+								$("#city_option").css("z-index","2")
+								$("#game_option").css("z-index","3")
+				}
+
+				var gc = game_clicked_filter.replace("_"," ")
+				var gx = gc.replace("_"," ")
+
+				console.log(city_clicked_filter)
+				var cc = city_clicked_filter.replace(/-/g, '_');
+				console.log(cc)
+
+				filter_click_form.append('cf', clicked_filter);
+				filter_click_form.append('nop', nop_clicked_filter);
+				filter_click_form.append('city', cc);
+				filter_click_form.append('game', gx);
+					$.ajax({
+				    	type: "POST",
+				    	enctype: 'multipart/form-data',
+				    	url: "php/filter.php",
+				    	data: filter_click_form,
+				    	dataType: 'json',
+				    	processData: false,
+				    	contentType: false,
+				    	cache: false,
+				    	timeout: 600000,
+				    success: function (data) {
+						markers.traverse(function(child){
+							child.material = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true }); 
+							child.material.opacity = 0;
+						})
+						for( var g = 0; g < data.length; g++){
+						   	markers.traverse(function(child){
+						   		if (child.name==data[g].unique_id) {
+						   			child.material = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true }); 
+									child.material.opacity = 1;
+									$(".filter_result_count").show();
+									$(".filter_result_count").html("RESULTS: "+data.length)
+						   		}
+						   	})
+						}
+				    },
+				    error: function (e) {
+				        console.log("ERROR : ", e);
+				    }
+				})
+			})
+
+			$(document).on("click touchend", '.mobile_menu_btn', function(e) {
+				$(".mobile_menu").show();
+			})
+
+			$(document).on("click touchend", '.mobile_menu_close_btn', function(e) {
+				$(".mobile_menu").hide();
+			})
+
+			$(document).on("click touchend", '.random_menu_btn_mobile', function(e) {
+				$(".mobile_menu").hide();
+			})
+
+			$(document).on("click touchend", '.random_menu_btn, .random_menu_btn_mobile', function(e) {
+				var r = Math.floor(Math.random() * (all_videos_list.length - 1 + 1) + 1);
+				var a = [];
+				markers.traverse(function(child){
+					a.push(child);
+				})
+				var position = { x : camera.position.x, y: camera.position.y, z: camera.position.z };
+				var selected = a[r].name;
+				var city_location;
+
+				var get_city_form = new FormData();
+					get_city_form.append('un_id', selected);
+					$.ajax({
+				    	type: "POST",
+				    	enctype: 'multipart/form-data',
+				    	url: "php/city_from_continent.php",
+				    	data: get_city_form,
+				    	dataType: 'json',
+				    	processData: false,
+				    	contentType: false,
+				    	cache: false,
+				    	timeout: 600000,
+				    success: function (data) {
+				    	city_location = data[0].continent;
+				    	var continent = city_location;
+				    	var cam_move = eval(continent)
+				    	console.log(continent);
+						var position = { x : camera.position.x, y: camera.position.y, z: camera.position.z };
+						var target = { x : cam_move.x, y: cam_move.y, z: cam_move.z };
+						$(".random_menu_btn").hide();
+						markers.traverse(function(child){
+							child.material = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true }); 
+							child.material.opacity = 0;
+						})
+						setTimeout(function(){
+							if (x>890) {
+								$(".random_menu_btn").show();
+							}
+						},4000)
+						var target_to_pos = { x : 300, y: 300, z: 300 };
+						var tween_to_pos = new TWEEN.Tween(position).to(target_to_pos, 2000);
+						tween_to_pos.onUpdate(function(){
+						    camera.position.x = position.x; camera.position.y = position.y; camera.position.z = position.z;
+						});
+						tween_to_pos.easing(TWEEN.Easing.Elastic.InOut)
+						tween_to_pos.start();
+						tween_to_pos.onComplete(function() {
+							tween.start();
+								markers.traverse(function(child){
+						   			if (child.name==selected) {
+						   				child.material = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true }); 
+						   				child.material.opacity = 1;
+						 		}
+							})
+						})
+						var tween = new TWEEN.Tween(position).to(target, 2000);
+						tween.onUpdate(function(){
+						    camera.position.x = position.x;
+						    camera.position.y = position.y;
+						    camera.position.z = position.z;
+						});
+						tween.easing(TWEEN.Easing.Elastic.InOut)
+				    },	
+				    error: function (e) {
+				        console.log("ERROR : ", e);
+				    }
+				})
+				
+
+				
+				})
+
+			window.addEventListener( 'mousemove', onMouseMove, false );
+			window.addEventListener( 'click', mouseclick, false );
+		
+			window.addEventListener( 'touchstart', onTouchMove, false);
+			window.addEventListener( 'touchend', touchEnd, false);
+
+
+		</script>
+
+	</body>
+</html>
